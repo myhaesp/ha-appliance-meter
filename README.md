@@ -4,7 +4,9 @@ Independent Home Assistant custom integration, domain `appliance_meter`. Tracks 
 
 ## Installation
 
-Repository: MyHAEsp/ha-appliance-meter. Prepared for private development; no public release or license has been approved.
+Repository: [MyHAEsp/ha-appliance-meter](https://github.com/MyHAEsp/ha-appliance-meter).
+Maintained by [Jan Kristensen (@SysAdminDk)](https://github.com/SysAdminDk).
+Licensed under the [MIT License](LICENSE), Copyright (c) 2026 Jan Kristensen.
 
 For manual installation, copy the complete `custom_components/appliance_meter`
 directory into your Home Assistant configuration’s `custom_components` directory.
@@ -13,8 +15,9 @@ Restart Home Assistant, then add **Appliance Meter** through
 power/energy sources, and optionally select an electricity price sensor.
 The sidebar panel appears once the first appliance is configured.
 
-Once published, add the approved repository URL to HACS as an **Integration**
-custom repository, download Appliance Meter, and restart Home Assistant.
+HACS requires the GitHub repository to be public. Add
+`https://github.com/MyHAEsp/ha-appliance-meter` as an **Integration** custom
+repository, download Appliance Meter, and restart Home Assistant.
 HACS installs the integration files; appliance configuration stays in Home Assistant.
 
 Before upgrading, back up your Home Assistant configuration, including
@@ -217,4 +220,4 @@ npm test
 
 Tested with Python 3.14 and Home Assistant 2026.10.4. Install `requirements-test.txt` into a virtual environment. With Node.js 20 or later, run `python -m pytest -q` for the backend suite (including a check of real HA flow schemas against the renderer). Run `npm ci` and `npm test` for the frontend DOM suite. Node dependencies are development-only; HA serves the plain JavaScript modules without a build step. Tests use temporary Home Assistant instances and a simulated browser DOM; they do not connect to the installed Home Assistant.
 
-See [release preparation](docs/releasing.md) for remaining publication decisions and validation.
+See [release checks](docs/releasing.md) for validation and publication requirements.

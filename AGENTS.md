@@ -8,4 +8,6 @@ Do not deploy, reload, restart Home Assistant, or publish this repository withou
 explicit authorization. Tests must use temporary Home Assistant instances and
 synthetic fixtures; never connect to a private installation.
 
-License choice and public repository ownership require maintainer approval.
+Maintainer and code owner: @SysAdminDk (Jan Kristensen).
+License: MIT, Copyright (c) 2026 Jan Kristensen.
+Future changes to license or repository ownership require maintainer approval.

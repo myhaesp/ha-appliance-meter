@@ -4,7 +4,9 @@
   "after_dependencies": [
     "frontend"
   ],
-  "codeowners": [],
+  "codeowners": [
+    "@SysAdminDk"
+  ],
   "config_flow": true,
   "dependencies": [
     "http",

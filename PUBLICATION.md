@@ -1,22 +1,21 @@
-# First private push preparation
+# Publication provenance
 
 Repository: MyHAEsp/ha-appliance-meter
+Maintainer and code owner: @SysAdminDk (Jan Kristensen)
+License: MIT, Copyright (c) 2026 Jan Kristensen
 
-This candidate contains a single fresh root commit with neutral contributor
-identity. Historical development commits, local migration notes, environments,
-caches, and installation backups are excluded. Local development history and
-working installations are preserved separately.
+The GitHub history begins with a sanitized root snapshot and subsequent reviewed
+changes. Original development history, private installation configuration,
+migration notes, environments, caches and installation backups were not imported.
+Fixture addresses and measurements are synthetic. Commit identities use the
+neutral MyHAEsp contributors identity.
 
-The origin remote uses the approved github-myhaesp SSH alias. Do not push
-until the owner reviews and approves the complete publication tree and history.
-Verify the destination repository is PRIVATE and empty immediately before
-the first push. If it contains existing branches or tags, stop and review;
-never force-push or mirror the development repository. Push only main.
+Before publication or a release, inspect every reachable commit and tracked file
+for credentials, installation identifiers, private addresses and local paths.
+Run the checks in docs/releasing.md and review any GitHub validation findings.
+Never mirror another development repository or push unreviewed refs.
 
-A local pre-push hook blocks pushes until .git/PUBLICATION_APPROVED exists.
-Create that marker only after explicit approval; it is not committed.
-
-License, copyright holder, and individual maintainer handle remain pending.
-No open-source license is granted by this preparation. Private publication
-does not authorize making the repository public, creating releases, or HACS
-submission. No Home Assistant deployment, reload, or restart is authorized.
+Public visibility has been authorized by the owner after successful preparation
+and checks. Changing it requires authenticated GitHub administrative access.
+Documentation and repository metadata do not themselves change visibility.
+No Home Assistant deployment, reload or restart is part of publication.

@@ -1,0 +1,2 @@
+# Includes Home Assistant 2026.10.4 and its matching pytest fixtures.
+pytest-homeassistant-custom-component==0.13.375

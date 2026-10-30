@@ -1,0 +1,11 @@
+{
+  "name": "appliance-meter-panel-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/frontend/*.test.js"
+  },
+  "devDependencies": {
+    "happy-dom": "^21.0.4"
+  }
+}

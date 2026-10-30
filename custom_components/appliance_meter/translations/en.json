@@ -1,0 +1,79 @@
+{
+  "title": "Appliance Meter",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Create appliance",
+        "data": {
+          "name": "Name",
+          "device_id": "Metering device",
+          "price_sensor": "Electricity price sensor",
+          "appliance_type": "Appliance type"
+        },
+        "description": "Choose an appliance type. For a physical appliance, select its metering device."
+      },
+      "sensors": {
+        "title": "Select appliance sensors",
+        "description": "Check the selected sensors. Choose Energy manually when several counters are available. Clear an optional field to leave it unassigned.",
+        "data": {
+          "power_sensor": "Power sensor",
+          "energy_sensor": "Energy sensor",
+          "price_sensor": "Electricity price sensor"
+        }
+      },
+      "aggregate": {
+        "title": "Custom Total membership",
+        "description": "Select appliances to combine. Changing members changes the displayed totals.",
+        "data": {
+          "name": "Name",
+          "members": "Member appliances"
+        }
+      }
+    },
+    "error": {
+      "blank_name": "Enter a name.",
+      "energy_in_use": "This energy sensor is already assigned to another appliance.",
+      "logical_sensor": "Select a physical sensor from another integration.",
+      "unknown_device": "Select a device that is still in the Home Assistant device registry.",
+      "not_device_sensor": "Select a compatible sensor belonging to the selected metering device.",
+      "members_required": "Select at least one appliance.",
+      "duplicate_members": "Select each appliance only once.",
+      "invalid_member": "Select existing physical Appliance Meter appliances only; remove missing or aggregate members.",
+      "logical_device": "Select a physical metering device from another integration, not an Appliance Meter virtual device."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Edit appliance",
+        "description": "Clear an optional field to remove its assignment.",
+        "data": {
+          "name": "Name",
+          "power_sensor": "Power sensor",
+          "energy_sensor": "Energy sensor",
+          "price_sensor": "Electricity price sensor",
+          "device_id": "Metering device"
+        }
+      },
+      "aggregate": {
+        "title": "Custom Total membership",
+        "description": "Select appliances to combine. Changing members changes the displayed totals.",
+        "data": {
+          "name": "Name",
+          "members": "Member appliances"
+        }
+      }
+    },
+    "error": {
+      "blank_name": "Enter a name.",
+      "energy_in_use": "This energy sensor is already assigned to another appliance.",
+      "logical_sensor": "Select a physical sensor from another integration.",
+      "members_required": "Select at least one appliance.",
+      "duplicate_members": "Select each appliance only once.",
+      "invalid_member": "Select existing physical Appliance Meter appliances only; remove missing or aggregate members.",
+      "logical_device": "Select a physical metering device from another integration, not an Appliance Meter virtual device.",
+      "unknown_device": "Select a device that is still in the Home Assistant device registry.",
+      "not_device_sensor": "Select a compatible sensor belonging to the selected metering device."
+    }
+  }
+}

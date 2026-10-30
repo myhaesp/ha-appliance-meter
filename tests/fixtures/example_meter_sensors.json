@@ -1,0 +1,154 @@
+[
+  {
+    "entity_id": "sensor.example_meter_voltage",
+    "platform": "esphome",
+    "original_device_class": "voltage",
+    "device_class": null,
+    "capabilities": {
+      "state_class": "measurement"
+    },
+    "unit_of_measurement": "V",
+    "disabled_by": null,
+    "state": "10",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "device_class": "voltage"
+    }
+  },
+  {
+    "entity_id": "sensor.example_meter_current",
+    "platform": "esphome",
+    "original_device_class": "current",
+    "device_class": null,
+    "capabilities": {
+      "state_class": "measurement"
+    },
+    "unit_of_measurement": "A",
+    "disabled_by": null,
+    "state": "11",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "A",
+      "device_class": "current"
+    }
+  },
+  {
+    "entity_id": "sensor.example_meter_power",
+    "platform": "esphome",
+    "original_device_class": "power",
+    "device_class": null,
+    "capabilities": {
+      "state_class": "measurement"
+    },
+    "unit_of_measurement": "W",
+    "disabled_by": null,
+    "state": "12",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "W",
+      "device_class": "power"
+    }
+  },
+  {
+    "entity_id": "sensor.example_meter_energy",
+    "platform": "esphome",
+    "original_device_class": "energy",
+    "device_class": null,
+    "capabilities": {
+      "state_class": "total_increasing"
+    },
+    "unit_of_measurement": "kWh",
+    "disabled_by": null,
+    "state": "13",
+    "attributes": {
+      "state_class": "total_increasing",
+      "unit_of_measurement": "kWh",
+      "device_class": "energy"
+    }
+  },
+  {
+    "entity_id": "sensor.example_meter_apparent_power",
+    "platform": "esphome",
+    "original_device_class": "apparent_power",
+    "device_class": null,
+    "capabilities": {
+      "state_class": "measurement"
+    },
+    "unit_of_measurement": "VA",
+    "disabled_by": null,
+    "state": "14",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "VA",
+      "device_class": "apparent_power"
+    }
+  },
+  {
+    "entity_id": "sensor.example_meter_reactive_power",
+    "platform": "esphome",
+    "original_device_class": "reactive_power",
+    "device_class": null,
+    "capabilities": {
+      "state_class": "measurement"
+    },
+    "unit_of_measurement": "var",
+    "disabled_by": null,
+    "state": "15",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "var",
+      "device_class": "reactive_power"
+    }
+  },
+  {
+    "entity_id": "sensor.example_meter_power_factor",
+    "platform": "esphome",
+    "original_device_class": "power_factor",
+    "device_class": null,
+    "capabilities": {
+      "state_class": "measurement"
+    },
+    "unit_of_measurement": null,
+    "disabled_by": null,
+    "state": "16",
+    "attributes": {
+      "state_class": "measurement",
+      "device_class": "power_factor"
+    }
+  },
+  {
+    "entity_id": "sensor.example_meter_total_energy",
+    "platform": "esphome",
+    "original_device_class": "energy",
+    "device_class": null,
+    "capabilities": {
+      "state_class": "total_increasing"
+    },
+    "unit_of_measurement": "kWh",
+    "disabled_by": null,
+    "state": "17",
+    "attributes": {
+      "state_class": "total_increasing",
+      "unit_of_measurement": "kWh",
+      "device_class": "energy"
+    }
+  },
+  {
+    "entity_id": "sensor.example_meter_total_energy_since_boot",
+    "platform": "esphome",
+    "original_device_class": "energy",
+    "device_class": null,
+    "capabilities": {
+      "state_class": "total_increasing"
+    },
+    "unit_of_measurement": "kWh",
+    "disabled_by": null,
+    "state": "18",
+    "attributes": {
+      "state_class": "total_increasing",
+      "unit_of_measurement": "kWh",
+      "device_class": "energy"
+    }
+  }
+]

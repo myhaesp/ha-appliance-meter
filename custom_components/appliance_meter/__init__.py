@@ -1,8 +1,11 @@
 """One manually configured entry per appliance."""
 from homeassistant.const import Platform
+from homeassistant.helpers import config_validation as cv
 
 from .accounting import Accounting
-from .const import is_aggregate
+from .const import DOMAIN, is_aggregate
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 PLATFORMS = [Platform.SENSOR]
 

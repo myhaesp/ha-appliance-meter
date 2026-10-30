@@ -4,6 +4,10 @@
   "after_dependencies": [
     "frontend"
   ],
+  "categories": [
+    "helpers.calculate_value",
+    "energy.meters_monitoring"
+  ],
   "codeowners": [
     "@SysAdminDk"
   ],

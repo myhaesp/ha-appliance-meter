@@ -3,6 +3,7 @@ import argparse
 import json
 from pathlib import Path
 import re
+import struct
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -14,6 +15,13 @@ def validate(release=False):
     assert manifest["domain"] == "appliance_meter"
     assert re.fullmatch(r"\d+\.\d+\.\d+", manifest["version"])
     assert hacs["render_readme"] is True
+    assert manifest["categories"] == [
+        "helpers.calculate_value", "energy.meters_monitoring"]
+    for filename, size in (("icon.png", 256), ("icon@2x.png", 512)):
+        png = (integration / "brand" / filename).read_bytes()
+        assert png[:8] == b"\x89PNG\r\n\x1a\n", filename
+        assert png[12:16] == b"IHDR", filename
+        assert struct.unpack(">IIBB", png[16:26]) == (size, size, 8, 6), filename
     assert sorted(p.name for p in integration.parent.iterdir() if p.is_dir() and p.name != "__pycache__") == ["appliance_meter"]
     assert json.loads((integration / "strings.json").read_text()) == json.loads(
         (integration / "translations/en.json").read_text())
@@ -26,7 +34,7 @@ def validate(release=False):
             pending.append(f"manifest.{key}")
     if not (ROOT / "LICENSE").is_file():
         pending.append("approved LICENSE")
-    print("Offline package structure, JSON, English translation parity and JS imports: OK")
+    print("Offline package structure, JSON, English translation parity, JS imports, categories and brand PNGs: OK")
     if pending:
         print("Publication pending: " + ", ".join(pending))
     if release and pending:

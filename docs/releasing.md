@@ -48,13 +48,19 @@ is unavailable, stop before changing visibility and report the manual action.
 After the change, verify unauthenticated repository access and the HACS/hassfest
 runs. Do not claim publication based on an SSH push alone.
 
-The repository can be used as a HACS custom repository after validation. HACS
-requires brand assets, including a brand/icon.png file; this repository does not
-yet supply brand assets, so HACS brand validation remains outstanding.
-Repository description, topics and enabled issues must also be checked through
-authenticated GitHub settings/API access. Catalog inclusion and a versioned
-GitHub release are separate steps. No tag, release, or external catalog/brand
-submission is created automatically.
+The repository can be used as a HACS custom repository after validation.
+Bundled brand assets live in `custom_components/appliance_meter/brand/`:
+`icon.png` is 256 × 256 and `icon@2x.png` is 512 × 512, with transparent
+rounded corners. The original geometric meter mark is covered by the project's
+MIT license; it contains no third-party artwork or Home Assistant branding.
+Regenerate the PNGs with `python scripts/render_brand_icon.py` (requires Pillow).
+No external brands submission or network fetch is needed to display the icon.
+
+The manifest categories are `helpers.calculate_value` and
+`energy.meters_monitoring`. Repository description, topics and enabled issues
+must also satisfy HACS. Catalog inclusion and a versioned GitHub release are
+separate steps. No tag, release, or external catalog submission is created
+automatically.
 
 ## Accounting compatibility
 

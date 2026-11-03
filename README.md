@@ -2,6 +2,8 @@
 
 Independent Home Assistant custom integration, domain `appliance_meter`. Tracks appliance energy and electricity costs with stable logical sensors and a built-in management panel.
 
+<img width="1662" height="831" alt="image" src="https://github.com/user-attachments/assets/b254bbda-8012-40e5-9229-0576b736d102" />
+
 ## Installation
 
 Repository: [MyHAEsp/ha-appliance-meter](https://github.com/MyHAEsp/ha-appliance-meter).

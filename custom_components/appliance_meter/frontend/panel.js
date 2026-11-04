@@ -1099,7 +1099,7 @@ export class ApplianceMeterPanel extends HTMLElement {
       node("h2", `Remove ${entry.name}?`),
       node(
         "p",
-        "Deleting this appliance removes its virtual sensors and associated Appliance Meter accounting state. It does not delete the physical ESPHome/Shelly device or other appliances.",
+        "Deleting this appliance removes its virtual sensors and associated Appliance Meter accounting state, including recorded session history. It does not delete the physical ESPHome/Shelly device or other appliances.",
       ),
     );
     if (entry.affected_totals.length)

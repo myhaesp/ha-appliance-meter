@@ -7,7 +7,7 @@ Copyright (c) 2026 Jan Kristensen.
 
 ## Local validation
 
-Run the backend and frontend commands in README.md, then:
+Run the backend and frontend commands in [development.md](development.md), then:
 
 ```sh
 python scripts/validate_package.py --release
@@ -41,12 +41,10 @@ manifest, HACS metadata and workflows for private information. The history start
 at a sanitized root snapshot; do not import earlier development commits.
 Push only reviewed changes to main without force or mirror options.
 
-The owner has authorized making this repository public after preparation and
-checks. Use authenticated GitHub CLI/API access with repository administration
-permission, or change visibility manually in repository settings. If that access
-is unavailable, stop before changing visibility and report the manual action.
-After the change, verify unauthenticated repository access and the HACS/hassfest
-runs. Do not claim publication based on an SSH push alone.
+This branch is local and uncommitted. No earlier publication note authorizes
+publishing its new sessions or mapping features. Commit, push, visibility changes,
+tags and releases each require the applicable current approval. Choose a new
+version only after the release scope is reviewed.
 
 The repository can be used as a HACS custom repository after validation.
 Bundled brand assets live in `custom_components/appliance_meter/brand/`:

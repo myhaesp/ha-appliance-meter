@@ -1,11 +1,11 @@
 """Logical entities with stable identities independent of physical sensors."""
 from decimal import Decimal, InvalidOperation
 from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
-from homeassistant.const import UnitOfPower, UnitOfEnergy
+from homeassistant.const import UnitOfPower, UnitOfEnergy, EntityCategory
 from homeassistant.core import callback
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_state_change_event
-from .const import DOMAIN, CONF_POWER, settings, is_aggregate
+from .const import DOMAIN, CONF_POWER, CONF_ENERGY, CONF_PRICE, settings, is_aggregate
 
 DESCRIPTIONS = (
     ("power", "Power", UnitOfPower.WATT, SensorDeviceClass.POWER, SensorStateClass.MEASUREMENT),
@@ -20,7 +20,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
         from .aggregate import AggregateSensor
         async_add_entities(AggregateSensor(entry, description) for description in DESCRIPTIONS)
     else:
-        async_add_entities(ApplianceMeterSensor(entry, description) for description in DESCRIPTIONS)
+        entities = [ApplianceMeterSensor(entry, description) for description in DESCRIPTIONS]
+        observer = getattr(entry.runtime_data, "sessions", None)
+        if observer is not None:
+            entities.append(SessionObservationSensor(entry, observer))
+        async_add_entities(entities)
 
 
 class ApplianceMeterSensor(SensorEntity):
@@ -43,6 +47,16 @@ class ApplianceMeterSensor(SensorEntity):
             identifiers={(DOMAIN, entry.entry_id)}, name=settings(entry)["name"])
         self._attr_available = False
         self._attr_native_value = None
+        if not is_aggregate(entry):
+            # Read-only projection of the authoritative entry, not another mapping.
+            # OptionsFlowWithReload reconstructs these attributes on every edit.
+            values = settings(entry)
+            self._attr_extra_state_attributes = {
+                "config_entry_id": entry.entry_id,
+                "power_entity_id": values.get(CONF_POWER),
+                "energy_entity_id": values.get(CONF_ENERGY),
+                "price_entity_id": values.get(CONF_PRICE),
+            }
 
     async def async_added_to_hass(self):
         if self._key != "power":
@@ -80,3 +94,39 @@ class ApplianceMeterSensor(SensorEntity):
         if value.is_finite() and factor is not None:
             self._attr_native_value = value * factor
             self._attr_available = True
+
+
+class SessionObservationSensor(SensorEntity):
+    """Bounded diagnostic projection; deliberately no statistics/energy class."""
+
+    _attr_has_entity_name = True
+    _attr_should_poll = False
+    _attr_name = "Session observation"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_icon = "mdi:clipboard-text-clock-outline"
+
+    def __init__(self, entry, observer):
+        self.observer = observer
+        self._attr_unique_id = f"{entry.entry_id}_session_observation"
+        self._attr_device_info = DeviceInfo(identifiers={(DOMAIN, entry.entry_id)})
+
+    @property
+    def native_value(self):
+        return "storage_error" if self.observer.error else self.observer.engine.state
+
+    @property
+    def extra_state_attributes(self):
+        engine = self.observer.engine
+        row = engine.active or (engine.records[-1] if engine.records else {})
+        return {"mode": "shadow", "profile": engine.profile,
+                "session_count": len(engine.records), "currency": self.observer.currency,
+                "last_electrical_activity": engine.last_electrical_activity,
+                "auxiliary_event_count": len(row.get("auxiliary_events", [])),
+                **{key: row.get(key) for key in (
+                    "id", "origin", "start", "start_confirmed", "main_end", "aftercare_start",
+                    "end", "end_confirmed", "last_activity", "duration_seconds", "kwh", "known_kwh", "cost",
+                    "known_cost", "unpriced_kwh", "energy_complete", "quality")}}
+
+    async def async_added_to_hass(self):
+        self.observer.listeners.add(self.async_write_ha_state)
+        self.async_on_remove(lambda: self.observer.listeners.discard(self.async_write_ha_state))

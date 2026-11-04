@@ -12,6 +12,8 @@ const FIELDS = new Set([
   "energy_sensor",
   "price_sensor",
   "members",
+  "session_mode",
+  "session_profile",
 ]);
 const LABELS = {
   name: "Name",
@@ -21,8 +23,13 @@ const LABELS = {
   energy_sensor: "Energy sensor",
   price_sensor: "Price sensor",
   members: "Member appliances",
+  session_mode: "Session observation",
+  session_profile: "Session detection profile",
 };
 const ERRORS = {
+  invalid_session_mode: "Choose Off or Shadow observation.",
+  invalid_session_profile: "Choose a supported session profile.",
+  session_sources_required: "Shadow observation requires a profile and a Power source.",
   blank_name: "Enter a name.",
   energy_in_use: "This Energy sensor is already assigned to another appliance.",
   logical_sensor: "Select a physical sensor from another integration.",
@@ -121,7 +128,7 @@ export function checkSchema(schema) {
           fail();
     } else if (kind === "select") {
       if (
-        !["appliance_type", "members"].includes(field.name) ||
+        !["appliance_type", "members", "session_mode", "session_profile"].includes(field.name) ||
         !keysAllowed(config, [
           "options",
           "multiple",

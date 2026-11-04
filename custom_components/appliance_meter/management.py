@@ -41,6 +41,7 @@ async def async_setup_management(hass):
     ])
     websocket_api.async_register_command(hass, websocket_management)
     websocket_api.async_register_command(hass, websocket_cost_debug)
+    websocket_api.async_register_command(hass, websocket_sessions)
     await panel_custom.async_register_panel(
         hass, frontend_url_path=PANEL_PATH, webcomponent_name="appliance-meter-panel",
         sidebar_title="Appliance Meter", sidebar_icon="mdi:power-plug",
@@ -169,4 +170,41 @@ def websocket_cost_debug(hass, connection, msg):
         "available": available,
         "currency": accounting.currency if available else None,
         "calculations": list(reversed(accounting.cost_calculations)) if available else [],
+    })
+
+
+@websocket_api.websocket_command({
+    "type": "appliance_meter/sessions", vol.Required("entry_id"): str,
+    vol.Optional("offset", default=0): vol.All(int, vol.Range(min=0)),
+    vol.Optional("limit", default=50): vol.All(int, vol.Range(min=1, max=100)),
+})
+@websocket_api.require_admin
+@websocket_api.async_response
+async def websocket_sessions(hass, connection, msg):
+    """Paginate the separate ledger, including while observation is switched off."""
+    from copy import deepcopy
+    from .session_runtime import session_store
+    entry = hass.config_entries.async_get_entry(msg["entry_id"])
+    if entry is None or entry.domain != DOMAIN or is_aggregate(entry):
+        connection.send_error(msg["id"], "not_found", "Physical appliance not found")
+        return
+    accounting = getattr(entry, "runtime_data", None)
+    observer = getattr(accounting, "sessions", None)
+    if observer is not None:
+        connection.send_result(msg["id"], observer.view(offset=msg["offset"], limit=msg["limit"]))
+        return
+    from homeassistant.exceptions import HomeAssistantError
+    try:
+        saved = await session_store(hass, entry).async_load()
+    except (ValueError, OSError, HomeAssistantError):
+        connection.send_error(msg["id"], "storage_unavailable", "Session ledger needs recovery")
+        return
+    engine = saved["engine"] if saved else {}
+    records = engine.get("records", [])
+    start = msg["offset"]
+    connection.send_result(msg["id"], {
+        "mode": "off", "state": "off", "profile": engine.get("profile"),
+        "currency": saved.get("currency") if saved else None,
+        "active": deepcopy(engine.get("active")), "total": len(records), "offset": start,
+        "sessions": deepcopy(list(reversed(records))[start:start + msg["limit"]]),
     })

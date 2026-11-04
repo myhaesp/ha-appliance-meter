@@ -7,3 +7,9 @@ __pycache__/
 node_modules/
 
 .public-export/
+
+# Private recordings and installation snapshots are not public test fixtures.
+/private/
+/tests/fixtures/sessions/
+/tests/fixtures/package-preserved.json
+/docs/session-reference-results.json

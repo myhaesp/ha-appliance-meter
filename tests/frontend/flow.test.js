@@ -566,3 +566,22 @@ test("editing device changes sensor choices without changing current assignments
   assert.equal(values.power_sensor, "sensor.new_power");
   assert.equal(host.querySelector("#field-price_sensor").value, "sensor.price");
 });
+
+test("session observation controls preserve explicit off/shadow and profile through submit", () => {
+  const schema = [
+    { name: "session_mode", selector: { select: { options: ["off", "shadow"], mode: "dropdown" } },
+      description: { suggested_value: "off" } },
+    { name: "session_profile", selector: { select: { options: [
+      { value: "washing_machine", label: "Washing machine" },
+      { value: "tumble_dryer", label: "Tumble dryer" },
+      { value: "dishwasher", label: "Dishwasher (candidate completion)" },
+    ], mode: "dropdown" } } },
+  ];
+  assert.deepEqual(formValues({ data_schema: schema }), { session_mode: "off" });
+  assert.deepEqual(submission(schema, { session_mode: "shadow", session_profile: "dishwasher" }),
+    { session_mode: "shadow", session_profile: "dishwasher" });
+  assert.deepEqual(submission(schema, { session_mode: "off", session_profile: "" }), { session_mode: "off" });
+  const host = document.createElement("form");
+  host.append(renderFields(schema, { session_mode: "shadow", session_profile: "washing_machine" }, metadata(), () => {}));
+  assert.equal(host.querySelectorAll("select").length, 2);
+});

@@ -159,6 +159,14 @@ def validate(hass, data, entry_id=None):
                       settings(entry).get(CONF_ENERGY) == energy
                       for entry in hass.config_entries.async_entries(DOMAIN)):
         errors[CONF_ENERGY] = "energy_in_use"
+    mode = data.get("session_mode", "off")
+    profile = data.get("session_profile")
+    if mode not in {"off", "shadow"}:
+        errors["session_mode"] = "invalid_session_mode"
+    if profile is not None and profile not in {"washing_machine", "tumble_dryer", "dishwasher"}:
+        errors["session_profile"] = "invalid_session_profile"
+    if mode == "shadow" and (not profile or not data.get(CONF_POWER)):
+        errors["base"] = "session_sources_required"
     return errors
 
 
@@ -260,6 +268,11 @@ class ApplianceMeterOptionsFlow(config_entries.OptionsFlowWithReload):
             self._original_device = assigned_device(self.hass, previous)
         original_device = self._original_device
         if user_input is not None:
+            user_input = dict(user_input)
+            # Older clients omit new observer fields; preserve them on edits.
+            for key in ("session_mode", "session_profile"):
+                if key not in user_input and key in previous:
+                    user_input[key] = previous[key]
             errors = validate(self.hass, user_input, self.config_entry.entry_id)
             device_id = user_input.get(CONF_DEVICE)
             if device_id:
@@ -288,6 +301,15 @@ class ApplianceMeterOptionsFlow(config_entries.OptionsFlowWithReload):
         fields = {vol.Required("name"): selector.TextSelector(),
                   vol.Optional(CONF_DEVICE): selector.DeviceSelector()}
         fields.update(schema(self, values, include_name=False).schema)
+        fields[vol.Optional("session_mode")] = selector.SelectSelector({
+            "options": [{"value": "off", "label": "Off (default)"},
+                        {"value": "shadow", "label": "Shadow observation — no helper or total changes"}],
+            "mode": "dropdown"})
+        fields[vol.Optional("session_profile")] = selector.SelectSelector({
+            "options": [{"value": "washing_machine", "label": "Washing machine"},
+                        {"value": "tumble_dryer", "label": "Tumble dryer"},
+                        {"value": "dishwasher", "label": "Dishwasher (candidate completion)"}],
+            "mode": "dropdown"})
         return self.async_show_form(
             step_id="init", errors=errors,
             data_schema=self.add_suggested_values_to_schema(vol.Schema(fields), values))

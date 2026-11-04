@@ -5,7 +5,7 @@ from homeassistant.const import UnitOfPower, UnitOfEnergy, EntityCategory
 from homeassistant.core import callback
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_state_change_event
-from .const import DOMAIN, CONF_POWER, CONF_ENERGY, CONF_PRICE, settings, is_aggregate
+from .const import DOMAIN, CONF_POWER, settings, is_aggregate
 
 DESCRIPTIONS = (
     ("power", "Power", UnitOfPower.WATT, SensorDeviceClass.POWER, SensorStateClass.MEASUREMENT),
@@ -47,16 +47,6 @@ class ApplianceMeterSensor(SensorEntity):
             identifiers={(DOMAIN, entry.entry_id)}, name=settings(entry)["name"])
         self._attr_available = False
         self._attr_native_value = None
-        if not is_aggregate(entry):
-            # Read-only projection of the authoritative entry, not another mapping.
-            # OptionsFlowWithReload reconstructs these attributes on every edit.
-            values = settings(entry)
-            self._attr_extra_state_attributes = {
-                "config_entry_id": entry.entry_id,
-                "power_entity_id": values.get(CONF_POWER),
-                "energy_entity_id": values.get(CONF_ENERGY),
-                "price_entity_id": values.get(CONF_PRICE),
-            }
 
     async def async_added_to_hass(self):
         if self._key != "power":

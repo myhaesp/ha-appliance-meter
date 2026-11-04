@@ -87,21 +87,9 @@ async def test_remapping_preserves_identity_totals_and_interrupts_only_old_sessi
     assert previous._closed and not previous.unsubscribers
     assert entry.runtime_data.values == totals
     assert entry.runtime_data.last == (Decimal(9000) if new_available else None)
-    for key in ('power', 'energy_total', 'cost_total', 'unpriced_energy'):
-        logical = ids[f'{entry.entry_id}_{key}'][0]
-        attrs = hass.states.get(logical).attributes
-        assert attrs['config_entry_id'] == entry.entry_id
-        assert attrs['power_entity_id'] == f'sensor.utility_l{new}_power'
-        assert attrs['energy_entity_id'] == f'sensor.utility_l{new}_energy'
-        assert attrs['price_entity_id'] == 'sensor.price'
-    # Real HA template lookup follows the entry, including the virtual entity's
-    # registry identity. HA's built-in config_entry_attr intentionally hides data.
-    logical = ids[f'{entry.entry_id}_energy_total'][0]
-    template = Template("{{ states(state_attr(appliance, 'power_entity_id')) }}", hass)
-    assert template.async_render({'appliance': logical}) == 0
-    assert Template("{{ config_entry_id(appliance) }}", hass).async_render({'appliance': logical}) == entry.entry_id
-    with pytest.raises(TemplateError, match='Invalid config entry attribute'):
-        Template("{{ config_entry_attr(entry, 'data') }}", hass).async_render({'entry': entry.entry_id})
+    for record in er.async_entries_for_config_entry(er.async_get(hass), entry.entry_id):
+        attrs = hass.states.get(record.entity_id).attributes
+        assert not {'config_entry_id', 'power_entity_id', 'energy_entity_id', 'price_entity_id'} & attrs.keys()
     if observer:
         assert observer.closed and not observer.unsubscribers
         engine = entry.runtime_data.sessions.engine
@@ -173,7 +161,7 @@ async def test_two_appliance_swap_rejects_collision_and_preserves_shadow_modes(h
     assert dryer.runtime_data.values['energy_total'] == Decimal('14.3456789')
 
 
-async def test_cleared_mapping_has_explicit_null_metadata_without_fallback(hass, freezer):
+async def test_cleared_sources_preserve_totals_without_metadata(hass, freezer):
     freezer.move_to(BASE)
     source(hass, 1)
     entry = await create(hass, 'Dryer', 1, 'tumble_dryer', 'off')
@@ -184,7 +172,4 @@ async def test_cleared_mapping_has_explicit_null_metadata_without_fallback(hass,
         # HA suppresses extra attributes on unavailable entities (power here).
         assert attrs.get('power_entity_id') is None
         assert attrs.get('energy_entity_id') is None
-        if r.unique_id.endswith('_energy_total'):
-            assert attrs['config_entry_id'] == entry.entry_id
-            assert 'power_entity_id' in attrs and 'energy_entity_id' in attrs
     assert entry.runtime_data.values == original

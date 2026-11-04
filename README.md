@@ -52,16 +52,14 @@ and IDs remain; the new meter's first valid reading establishes a fresh baseline
 Consumption before that baseline cannot be recovered automatically.
 [Source changes and compatibility](docs/source-mapping.md).
 
-## Sessions: unreleased development functionality
+## Optional session observation
 
-This integration branch adds optional **Off / Shadow** session observation,
-historical session pricing, quality flags, source metadata and a diagnostic sensor.
-These additions are **not part of the published v0.1.0 release**. Existing entries
-default to Off. Dishwasher completion remains an unverified candidate; observations
+Version 0.2.1 includes **Off / Shadow** session observation, historical session
+pricing, quality flags and a diagnostic sensor. Existing entries default to Off. Dishwasher completion remains an unverified candidate; observations
 never control appliances or update learning helpers.
 
 Session history is available through an administrator read-only API, not a new
-session-history dashboard. [Development feature guide](docs/sessions.md) ·
+session-history dashboard. [Session guide](docs/sessions.md) ·
 [Activation and rollback](docs/activation-rollback.md).
 
 ## More information

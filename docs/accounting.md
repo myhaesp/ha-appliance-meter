@@ -31,6 +31,6 @@ the pending interval; a subsequent reading recovers energy from the saved baseli
 using the then-current price. Runtime/source health and held historical totals
 must not be confused.
 
-Session pricing in the development branch is a separate ledger with explicit
+Session pricing is a separate ledger with explicit
 historical intervals and quality flags. It does not rewrite lifetime accounting,
 helpers, Recorder statistics or prior prices. See [sessions](sessions.md).

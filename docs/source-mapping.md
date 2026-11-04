@@ -4,25 +4,9 @@ The appliance's existing config entry is the authoritative mapping. Assign
 power_sensor, energy_sensor and price_sensor in the options flow; never infer a
 physical phase from a localized appliance name.
 
-## Unreleased metadata interface
-
-In this development branch, the four existing physical-appliance logical sensors
-expose config_entry_id, power_entity_id, energy_entity_id and price_entity_id.
-These read-only attributes project the configured assignments. No extra measurement
-entity or second mapping table is created. Aggregates have members rather than a
-fictional single physical source.
-
-Prefer logical Energy Total as an attribute anchor: it remains available with its
-persisted total when the physical source is offline. HA suppresses extra attributes
-on unavailable entities, so Power is a less reliable metadata anchor.
-Unloaded/deleted entries or cleared assignments return missing/null values; consumers
-must not guess a phase or substitute missing measurements with zero.
-
-For ordinary triggers use the stable logical Power entity. A consumer that needs a
-raw counter can read state_attr(logical_energy, 'energy_entity_id'), validate the
-result and its unit, then retain that source identity with its own baseline.
-The administrator management API also exposes assignments. HA's config_entry_attr
-does not expose private config-entry data/options to templates.
+External consumers configure their own sensor references. Appliance Meter does
+not publish extra sensor attributes for Scheduling or require it to be installed.
+The projects can be maintained and released independently.
 
 ## Change sources while idle
 
@@ -43,7 +27,3 @@ One physical energy entity cannot be assigned to two appliances. A source swap
 is not atomic: an explicitly reviewed idle sequence must release an assignment,
 move the second and then complete the first. Consumption during an unassigned
 interval cannot safely be attributed or backfilled.
-
-The companion Scheduling development branch consumes logical sensors and metadata.
-Existing compatibility aliases retain their IDs and restored offsets. They need
-not have the same absolute total as Appliance Meter. See its mapping guide.

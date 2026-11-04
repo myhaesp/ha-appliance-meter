@@ -23,9 +23,10 @@ and accounting stores before changing versions. Keep existing entries and source
 identities; never delete/recreate an appliance to upgrade it. A code rollback must
 not restore old accounting totals over newer consumption.
 
-The unreleased integration branch contains session observation and source metadata.
-It is not installed by downloading v0.1.0. Review its version, tests and
-[activation plan](activation-rollback.md) before any separate rollout.
+Version 0.2.1 includes optional session observation, default Off. It retains the
+installed 0.2.0 runtime behavior while adding the CONFIG_SCHEMA compatibility
+fix and release metadata. No Scheduling-specific sensor attributes are added.
+Keep existing entries, accounting and session stores during the upgrade.
 
 A custom HACS repository is not proof of default-catalog inclusion or successful
 provider CI. See [release checks](releasing.md) for validation boundaries.

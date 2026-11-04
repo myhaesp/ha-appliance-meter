@@ -1,6 +1,6 @@
 # Session observation
 
-Unreleased development functionality; not part of published v0.1.0. Existing entries
+Available in v0.2.1. Existing entries
 remain off unless an administrator explicitly selects Shadow observation and a
 profile. This feature observes sources; it never writes an appliance control,
 YAML helper, legacy energy/cost total, Recorder statistic or InfluxDB point.

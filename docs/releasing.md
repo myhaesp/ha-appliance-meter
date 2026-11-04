@@ -41,31 +41,5 @@ manifest, HACS metadata and workflows for private information. The history start
 at a sanitized root snapshot; do not import earlier development commits.
 Push only reviewed changes to main without force or mirror options.
 
-This branch is local and uncommitted. No earlier publication note authorizes
-publishing its new sessions or mapping features. Commit, push, visibility changes,
-tags and releases each require the applicable current approval. Choose a new
-version only after the release scope is reviewed.
-
-The repository can be used as a HACS custom repository after validation.
-Bundled brand assets live in `custom_components/appliance_meter/brand/`:
-`icon.png` is 256 × 256 and `icon@2x.png` is 512 × 512, with transparent
-rounded corners. The original geometric meter mark is covered by the project's
-MIT license; it contains no third-party artwork or Home Assistant branding.
-Regenerate the PNGs with `python scripts/render_brand_icon.py` (requires Pillow).
-No external brands submission or network fetch is needed to display the icon.
-
-The manifest categories are `helpers.calculate_value` and
-`energy.meters_monitoring`. Repository description, topics and enabled issues
-must also satisfy HACS. Catalog inclusion and a versioned GitHub release are
-separate steps. No tag, release, or external catalog submission is created
-automatically.
-
-## Accounting compatibility
-
-Release preparation changes licensing, ownership metadata, documentation and
-workflows. It does not change integration identity, accounting behavior,
-persistent totals, config-entry data, source baselines or entity unique IDs.
-
-Legacy stores without a currency retain DKK totals and units. New stores retain
-their original configured currency across reloads. No currency conversion,
-accounting migration, appliance edits or Home Assistant deployment is performed.
+Release 0.2.1 publishes the installed session functionality with HACS metadata
+and CONFIG_SCHEMA compatibility. Scheduling is an independent project.

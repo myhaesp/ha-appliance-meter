@@ -1,6 +1,6 @@
-# Development activation and rollback
+# Session activation and rollback
 
-Session observation is unreleased and defaults to Off. Local integration and tests
+Session observation defaults to Off. Release availability and tests
 do not authorize installation, restart, appliance operations or historical import.
 
 Before a separately approved rollout, back up then-current code, config entries,
@@ -25,4 +25,4 @@ recovery decision because old accounting files can lose or duplicate new consump
 
 Stop rollout if identities change, totals jump/reset, stores fail to load, pauses
 split sessions or completion uncertainty disappears. No automatic production
-rollback, reload or restart is part of this development branch.
+rollback, reload or restart is part of this integration.

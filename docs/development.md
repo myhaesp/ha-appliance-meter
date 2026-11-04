@@ -35,6 +35,5 @@ Integration checks with the companion Scheduling branch can be run separately in
 an isolated temporary HA instance; neither public suite requires the other repo
 or a live HA server.
 
-Manifest/package version remains the published baseline until a new release version
-is approved. README and sessions documentation explicitly label the integrated
-features as unreleased; no tag or release is created by these tests.
+Release versions are maintained in manifest.json and pyproject.toml together.
+Public fixtures are synthetic and must not require Scheduling, private data or HA.

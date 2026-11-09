@@ -244,7 +244,7 @@ export function periodMetric(entry, key, start, data, states, now) {
   );
 }
 
-function costCoverage(cost, energy, unpriced) {
+export function costCoverage(cost, energy, unpriced) {
   if (cost.value === null) return cost;
   if (energy.status === "discontinuity")
     return result("discontinuity", energy.reason);

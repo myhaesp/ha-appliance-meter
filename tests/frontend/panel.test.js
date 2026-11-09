@@ -1020,3 +1020,37 @@ test("appliance details load actual cost diagnostics and refresh only on energy 
   assert.match(root.querySelector('.cost-debug').textContent, /open a member/);
   assert.equal(requests, 2);
 });
+
+test('information popup defaults to Overview with three accessible tabs, persistent title/status and preserved Edit/Debug', async()=>{
+  const hass=fakeHass(),panel=await mount(hass);panel.showDetails('entry-physical');await tick();
+  const root=panel.shadowRoot,dialog=root.querySelector('.detail-box'),tabs=[...dialog.querySelectorAll('[role="tab"]')];
+  assert.deepEqual(tabs.map(t=>t.textContent),['Overview','Configuration','Debug']);
+  assert.equal(tabs[0].getAttribute('aria-selected'),'true');
+  assert.equal(dialog.querySelectorAll('[role="tabpanel"]:not([hidden])').length,1);
+  assert.match(dialog.querySelector('.detail-heading').textContent,/Example Appliance/);
+  assert.match(dialog.querySelector('.detail-status').textContent,/Configuration Status/);
+  assert(!dialog.querySelector('.detail-status').closest('[role="tabpanel"]'));
+  assert.equal(dialog.querySelectorAll('svg[role="img"]').length,2);
+  tabs[1].click();assert.equal(tabs[1].getAttribute('aria-selected'),'true');
+  assert.match(dialog.querySelector('#appliance-tabpanel-1').textContent,/Physical meter/);
+  tabs[1].dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));
+  assert.equal(tabs[2].getAttribute('aria-selected'),'true');assert.equal(root.activeElement,tabs[2]);
+  assert(dialog.querySelector('#appliance-tabpanel-2 .cost-debug'));
+  assert.match(dialog.querySelector('#appliance-tabpanel-2').textContent,/Refresh calculations/);
+  assert.match(dialog.querySelector('#appliance-tabpanel-2').textContent,/Refresh statistics/);
+  assert.equal(dialog.querySelector('#appliance-tabpanel-0 button'),null);
+  assert(dialog.querySelector('#appliance-tabpanel-2 .statistics-details'));
+  assert.equal(dialog.querySelector('#appliance-tabpanel-0').querySelectorAll('p').length,1);
+  tabs[2].dispatchEvent(new KeyboardEvent('keydown',{key:'Home',bubbles:true}));assert.equal(tabs[0].getAttribute('aria-selected'),'true');
+  tabs[0].dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));assert.equal(tabs[2].getAttribute('aria-selected'),'true');
+  tabs[1].click();button(dialog,'Edit').click();await tick();assert(root.querySelector('#field-name'));
+});
+
+test('open popup keeps the selected tab and updates name/status without replacing diagnostics', async()=>{
+  const hass=fakeHass(),panel=await mount(hass);panel.showDetails('entry-physical');await tick();
+  const root=panel.shadowRoot;root.querySelector('#appliance-tab-1').click();const debug=root.querySelector('.cost-debug');
+  panel._metadata.entries[0].name='Renamed appliance';panel.updateManagement();
+  assert.equal(root.querySelector('#appliance-tab-1').getAttribute('aria-selected'),'true');
+  assert.equal(root.querySelector('.cost-debug'),debug);assert.equal(root.querySelector('.detail-heading').textContent,'Renamed appliance');
+  panel.closeOverlay();assert.equal(root.querySelector('.overlay'),null);
+});

@@ -1,4 +1,5 @@
 import { FlowView, node } from "./flow.js";
+import { OverviewView } from "./overview.js";
 import { CostDebugView } from "./cost-debug.js";
 import {
   calendarPeriods,
@@ -27,9 +28,12 @@ main{width:100%;padding:12px 20px 20px}.summary{display:flex;justify-content:spa
 .device-picker {display:block;position:relative}.device-picker input {width:100%}.device-results {position:absolute;top:44px;left:0;right:0;z-index:15;max-height:240px;overflow:auto;list-style:none;margin:0;padding:4px;background:var(--card-background-color,white);border:1px solid var(--divider-color,#aaa);border-radius:6px;box-shadow:0 4px 12px #0003}.device-results[hidden] {display:none}.device-results li {padding:8px;min-height:44px;cursor:pointer}.device-results li[aria-selected=true],.device-results li:hover {background:var(--secondary-background-color,#eee)}.device-results span,.device-results small {display:block;overflow-wrap:anywhere}.device-results small {color:var(--secondary-text-color,#666)}
 .flow-actions {flex-wrap:nowrap}.primary {background:var(--primary-color,#007fa8);color:var(--text-primary-color,white);border-color:var(--primary-color,#007fa8)}
 .cost-debug-history{overflow:auto}.cost-debug-history table{min-width:520px;font-size:12px}.cost-debug-history th{width:auto!important;text-align:left}.cost-debug-history td{text-align:left;overflow-wrap:anywhere}.cost-debug summary{cursor:pointer}.cost-debug-latest dd{font-variant-numeric:tabular-nums}
+.detail-tabs{display:flex;gap:4px;border-bottom:1px solid var(--divider-color,#ddd);margin:16px 0}.detail-tabs [role=tab]{flex:1;border:0;border-radius:4px 4px 0 0;background:transparent;border-bottom:3px solid transparent}.detail-tabs [aria-selected=true]{color:var(--primary-color,#03a9f4);border-bottom-color:var(--primary-color,#03a9f4)}.overview-totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.overview-totals dt{font-size:12px;color:var(--secondary-text-color,#666)}.overview-totals dd{margin:4px 0;font-variant-numeric:tabular-nums}.daily-chart{margin:12px 0}.daily-chart figcaption{font-weight:600}.daily-chart svg{display:block;width:100%;height:auto;overflow:visible}.daily-chart text{font:12px system-ui;fill:var(--secondary-text-color,#666)}.chart-grid{stroke:var(--divider-color,#ddd)}.chart-zero{stroke:var(--secondary-text-color,#666)}.chart-bar{fill:var(--primary-color,#03a9f4)}.chart-partial{fill-opacity:.5;stroke:var(--primary-color,#03a9f4);stroke-dasharray:4 2}
 .danger-actions {margin-top:24px;padding-top:20px;border-top:1px solid var(--divider-color,#ddd)}
 .overlay {position:fixed;inset:0;z-index:10;background:#0006;display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:24px}.flow-box,.detail-box {background:var(--card-background-color,white);padding:24px;border-radius:12px;width:min(100%,650px);max-height:calc(100dvh - 48px);overflow:auto}.field {margin:14px 0}.field>label {display:block;margin-bottom:5px}input[type=text],select {width:100%;padding:12px;border:1px solid var(--divider-color,#aaa);border-radius:6px;background:var(--card-background-color,white)}fieldset {border:0;margin:0;padding:0;min-width:0}.field fieldset {border:1px solid var(--divider-color,#ddd);border-radius:6px;padding:10px}.member-choice {display:flex;align-items:center;gap:10px;min-height:44px}.member-choice input {width:20px;height:20px;flex-shrink:0}.member-choice span {min-width:0;overflow-wrap:anywhere}dt {font-weight:600}dd {margin:4px 0 16px;overflow-wrap:anywhere}.status {font-size:13px} :focus-visible {outline:3px solid var(--primary-color,#03a9f4);outline-offset:2px}
-@media(max-width:600px) {header {padding:12px}main {padding:12px}.overlay {padding:8px}.flow-box,.detail-box {padding:16px;max-height:calc(100dvh - 16px)}.actions button {flex:1}}
+.appliance-details .detail-heading{margin:0 0 8px}.appliance-details .detail-status p{margin:8px 0}.appliance-details .detail-tabs{margin:12px 0}.overview-totals{margin:12px 0}.overview-charts{display:grid;grid-template-columns:minmax(0,1fr)}.overview-footnote{margin:8px 0 0}.overview-debug{overflow-wrap:anywhere}.statistics-details{margin:12px 0}.statistics-details>summary{cursor:pointer;min-height:40px;padding:8px 0}.overview-coverage-table{width:100%;border-collapse:collapse;font-size:12px}.overview-coverage-table th,.overview-coverage-table td{padding:6px;text-align:left;vertical-align:top;border-bottom:1px solid var(--divider-color,#ddd)}
+@media(min-width:900px){.appliance-details{width:min(100%,920px)}.overview-charts{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.daily-chart text{font-size:18px}}
+@media(max-width:600px) {.daily-chart text{font-size:18px}header {padding:12px}main {padding:12px}.overlay {padding:8px}.flow-box,.detail-box {padding:16px;max-height:calc(100dvh - 16px)}.actions button {flex:1}}
 
 @media(max-width:700px){.toolbar{gap:8px;padding:12px}.search{max-width:none;flex-basis:180px}main{padding:10px 12px}.create{font-size:13px}.filters{left:auto;right:0}th,td{padding:4px 8px}}@media(max-width:440px){.toolbar{padding:8px}.search{flex-basis:calc(100% - 56px)}.view-toggle{margin-left:0}.create{padding:6px 10px}main{padding:8px}.filters{left:0;right:auto}}
 `;
@@ -927,7 +931,7 @@ export class ApplianceMeterPanel extends HTMLElement {
     holder.append(trigger, menu);
     return holder;
   }
-  configurationSummary(entry) {
+  configurationSummary(entry, statusOnly = false) {
     const summary = node("div");
     const { status, issues } = this.configuration(entry);
     summary.append(
@@ -943,6 +947,7 @@ export class ApplianceMeterPanel extends HTMLElement {
       for (const issue of issues) list.append(node("li", issue));
       summary.append(list);
     }
+    if (statusOnly) return summary;
     const list = node("dl");
     list.append(node("dt", "Type"), node("dd", this.typeName(entry)));
     if (entry.type === "physical") {
@@ -974,12 +979,21 @@ export class ApplianceMeterPanel extends HTMLElement {
       const summary = this._overlay?.querySelector(".detail-summary");
       if (!entry) this.closeOverlay();
       else {
-        if (summary) summary.replaceChildren(this.configurationSummary(entry));
+        if (summary) {
+          const configuration = this.configurationSummary(entry);
+          summary.replaceChildren(configuration.querySelector("dl"));
+        }
+        this._overlay.querySelector(".detail-heading").textContent = entry.name;
+        this._overlay.querySelector(".detail-box").setAttribute("aria-label", entry.name);
+        this._overlay.querySelector(".detail-status").replaceChildren(this.configurationSummary(entry, true));
+        this._overview?.update(this._hass, this._metadata, entry);
         this._costDebug?.update(this._hass, entry);
       }
     }
   }
   closeOverlay() {
+    this._overview?.close();
+    this._overview = null;
     this._costDebug?.close();
     this._costDebug = null;
     if (this._flow) void this._flow.session.close();
@@ -1018,7 +1032,7 @@ export class ApplianceMeterPanel extends HTMLElement {
           ...content.querySelectorAll(
             "button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled)",
           ),
-        ];
+        ].filter(element => !element.closest("[hidden]") && element.tabIndex !== -1);
         if (!focusable.length) return;
         const first = focusable[0],
           last = focusable.at(-1),
@@ -1056,28 +1070,57 @@ export class ApplianceMeterPanel extends HTMLElement {
       return;
     }
     const detail = node("section", undefined, {
-      class: "detail-box",
+      class: "detail-box appliance-details",
       role: "dialog",
       "aria-modal": "true",
       "aria-label": entry.name,
     });
-    detail.append(node("h2", entry.name));
+    detail.append(node("h2", entry.name, { class: "detail-heading" }));
+    const status = node("div", undefined, { class: "detail-status" });
+    status.append(this.configurationSummary(entry, true)); detail.append(status);
+    const tabs = node("div", undefined, { class: "detail-tabs", role: "tablist", "aria-label": "Appliance information" });
+    const panels = [], buttons = [];
+    for (const [index, label] of ["Overview", "Configuration", "Debug"].entries()) {
+      const tab = node("button", label, { type: "button", role: "tab", id: `appliance-tab-${index}`,
+        "aria-controls": `appliance-tabpanel-${index}`, "aria-selected": String(index === 0) });
+      tab.tabIndex = index === 0 ? 0 : -1;
+      const panel = node("section", undefined, { role: "tabpanel", id: `appliance-tabpanel-${index}`, "aria-labelledby": tab.id });
+      panel.hidden = index !== 0;
+      buttons.push(tab); panels.push(panel); tabs.append(tab);
+    }
+    const selectTab = (index, focus = false) => {
+      buttons.forEach((button, i) => {
+      button.setAttribute("aria-selected", String(i === index)); button.tabIndex = i === index ? 0 : -1;
+      panels[i].hidden = i !== index;
+        if (focus && i === index) button.focus();
+      });
+      if (index === 0 || index === 2) this._overview?.render();
+    };
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => selectTab(index));
+      button.addEventListener("keydown", event => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        selectTab(event.key === "Home" ? 0 : event.key === "End" ? 2 :
+          (index + (event.key === "ArrowRight" ? 1 : 2)) % 3, true);
+      });
+    });
+    detail.append(tabs, ...panels);
     const summary = node("div", undefined, { class: "detail-summary" });
-    summary.append(this.configurationSummary(entry));
-    detail.append(summary);
-    this.overlay(detail);
-    this._detailEntry = entryId;
-    this._costDebug = new CostDebugView();
-    detail.append(this._costDebug.element);
-    this._costDebug.update(this._hass, entry);
-    const actions = node("div", undefined, { class: "actions" });
+    summary.append(this.configurationSummary(entry).querySelector("dl")); panels[1].append(summary);
     const edit = node("button", "Edit", { type: "button" });
-    edit.addEventListener("click", () => this.openFlow(entryId));
+    edit.addEventListener("click", () => this.openFlow(entryId)); panels[1].append(edit);
     const close = node("button", "Close", { type: "button" });
     close.addEventListener("click", () => this.closeOverlay());
-    actions.append(edit, close);
-    detail.append(actions);
+    const actions = node("div", undefined, { class: "actions" }); actions.append(close); detail.append(actions);
+    this.overlay(detail);
+    this._detailEntry = entryId;
+    this._overview = new OverviewView(); panels[0].append(this._overview.element);
+    this._overview.update(this._hass, this._metadata, entry);
+    this._costDebug = new CostDebugView(); panels[2].append(this._overview.debugElement, this._costDebug.element);
+    this._costDebug.update(this._hass, entry);
   }
+
   async confirmRemoval(entryId) {
     // Refresh the dependent-group warning immediately before asking the user.
     await this.refresh();
